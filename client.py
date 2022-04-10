@@ -12,9 +12,11 @@ for sequence_number in range(1,11):
         end = time.time()
         RTT = end - start
         #print(f'{response_message} {sequence_number} {RTT}')
-        print('#%d'%sequence_number)
-        print('Response_message:%s'%response_message)
-        print('RTT:%fseconds'%RTT)
+        print('Sequence Number: #%d'%sequence_number)
+        print('Response_message: %s'%response_message)
+        print('RTT: %fseconds'%RTT)
+        print()
     except timeout:
-        print('#%d'%sequence_number)
+        print('Sequence Number: #%d'%sequence_number)
         print('Request timed out')
+        print()
