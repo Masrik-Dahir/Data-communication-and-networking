@@ -7,7 +7,7 @@ import socket as http_server_socket
 
 
 # Define socket host and port
-server_ip = '0.0.0.0'
+server_ip = '127.0.0.1'
 server_port = 8000
 
 # Create socket
@@ -28,6 +28,8 @@ while True:
     # Parse HTTP headers
     headers = request.split('\n')
     filename = str(headers[0].split()[1]).replace('/','')
+    if filename == "":
+        filename = "index.html"
 
     # Get the content of htdocs/index.html
     try:

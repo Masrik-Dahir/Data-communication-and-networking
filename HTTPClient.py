@@ -1,29 +1,19 @@
-#!/usr/bin/env python
+# Author: Masrik Dahir
+# Date: 2021-05-04
 
-import httplib2
-import sys
+# Sample input: GET /index.html HTTP/1.0
 
-# get http server ip
-http_server = sys.argv[1]
-# create a connection
-conn = httplib2.HTTPConnection(http_server)
+import socket
+server_name = '127.0.0.1'
+server_port = 8000
 
-while 1:
-    cmd = input('input command (ex. GET index.html): ')
-    cmd = cmd.split()
-
-    if cmd[0] == 'exit':  # tipe exit to end it
-        break
-
-        # request command to server
-    conn.request(cmd[0], cmd[1])
-
-    # get response from server
-    rsp = conn.getresponse()
-
-    # print server response and data
-    print(rsp.status, rsp.reason)
-    data_received = rsp.read()
-    print(data_received)
-
-conn.close()
+# create a socket object
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((server_name, server_port))
+sentence = input('Input: ')
+# option = input('Options: ')
+client.send(sentence.encode())
+# client.send(option.encode())
+modifiedSentence = client.recvfrom(2048)
+print (modifiedSentence[0].decode())
+client.close()
