@@ -24,9 +24,13 @@ if addSlash:
     path_name = "/"+path_name
 if path_name == "":
     path_name = "/"
+
+print("Host:\t"+host_name)
+print("Port:\t"+port_name)
+print("Path:\t"+path_name)
 # ______________________________________________________________________________________________
-
-
+# host_name = 'httpbin.org'
+# port_name = '80'
 
 
 print('# Creating socket')
@@ -46,7 +50,8 @@ print('# Connecting to server, ' + host_name + ' (' + remote_ip + ')')
 s.connect((remote_ip , int(port_name)))
 print('# Sending data to server')
 
-request = "GET / HTTP/1.0\r\n\r\n"
+request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
+          %("/", host_name, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
 
 print(request)
 
@@ -58,8 +63,57 @@ except socket.error:
     sys.exit()
 
 print('# Receive data from server')
-reply = str(s.recv(4096)).split(';')
+reply = str(s.recv(4096), 'utf-8')
 
-for i in reply:
-    print(i)
+print(reply)
 
+# data = b''
+# while True:
+#     buf = s.recv(1024)
+#     if not buf:
+#         break
+#     data += buf
+# print(data)
+
+def regex(s, tag):
+    text = re.findall("<" +tag+ ">(.*?)</" +tag+ ">", s, re.DOTALL)
+    text = str(text).replace("[", "")
+    text = str(text).replace("]", "")
+    text = str(text).replace("'", "")
+    text = str(text).split(" ")
+    for i in text:
+        if i == "":
+            text.remove(i)
+    return text
+
+def link(s):
+    text = re.findall("<a href=(.*?)>.*?</a>", s, re.DOTALL)
+    text = str(text).replace("[", "")
+    text = str(text).replace("]", "")
+    text = str(text).replace("'", "")
+    text = str(text).replace("\"", "")
+    text = str(text).split(" ")
+    for i in text:
+        if i == "":
+            text.remove(i)
+    return text
+
+def string(s):
+    text = ""
+    for i in s:
+        text += str(i) + " "
+    return text
+
+def access_code(s):
+    access_code = ""
+    for i in regex(s, "title"):
+        if str(i).isdigit():
+            access_code = str(i)
+    return access_code
+
+# if int(access_code(reply)) > 299 and int(access_code(reply)) < 400:
+#     print("The response code: " + access_code(reply))
+#     print("The URL where the file is located: " + string(link(reply)))
+
+x = requests.get("https://"+host_name+path_name, params={'Host': host_name, 'Time': str(datetime.datetime.now()), 'Class-name': 'VCU-CMSC440-2022', 'User-name': 'Masrik Dahir'})
+print(x.headers)

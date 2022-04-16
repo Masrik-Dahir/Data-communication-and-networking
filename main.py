@@ -23,6 +23,6 @@ if path_name == "":
     path_name = "/"
 
 
-x = requests.get(input, cookies={'Host': host_name, 'Time': str(datetime.datetime.now()), 'Class-name': 'VCU-CMSC440-2022' 'User-name: Masrik Dahir'})
-print(x.request)
+x = requests.get(input, params={'Host': host_name, 'Time': str(datetime.datetime.now()), 'Class-name': 'VCU-CMSC440-2022', 'User-name': 'Masrik Dahir'})
+print(x.headers)
 
