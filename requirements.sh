@@ -1,1 +1,1 @@
-pip install httplib2
+python -m pip install requests

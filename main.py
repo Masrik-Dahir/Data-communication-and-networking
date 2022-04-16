@@ -1,16 +1,28 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+import requests
+import datetime
+import sys
+import re
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+input = str(sys.argv[1])
+addSlash = False
+p = '(?:http.*://)?(?P<host>[^:/ ]+).?(?P<port>[0-9]*)(?P<path>[^\s]*)'
+link = re.search(p,input)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+host_name = link.group('host')
+
+port_name = link.group('port')
+if port_name == "":
+    port_name = "80"
+    addSlash = True
+
+path_name = link.group('path')
+if addSlash:
+    path_name = "/"+path_name
+if path_name == "":
+    path_name = "/"
+
+
+x = requests.get(input, cookies={'Host': host_name, 'Time': str(datetime.datetime.now()), 'Class-name': 'VCU-CMSC440-2022' 'User-name: Masrik Dahir'})
+print(x.request)
+

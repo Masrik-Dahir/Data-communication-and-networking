@@ -45,5 +45,7 @@ while True:
     client_connection.sendall(response.encode())
     client_connection.close()
 
+#
+
 # Close socket
 socket_1.close()
