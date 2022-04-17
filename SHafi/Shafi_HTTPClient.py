@@ -4,13 +4,13 @@
 # Project 1
 
 import socket
-import webbrowser
 from datetime import datetime
 import sys
 import os
 import re
 import requests
-from urllib.parse import urlparse
+
+
 arguments = sys.argv
 
 if len(arguments) <= 2:
@@ -60,6 +60,7 @@ if len(arguments) <= 2:
     print(builtRequest.request.method + " " + builtRequest.request.url)
     print("Host: " + builtRequest.request.headers['host'])
     print("Time: " + builtRequest.request.headers['time'])
+
     print("Class-name: " + builtRequest.request.headers['class-name'])
     print("User-name: " + builtRequest.request.headers['user-name'])
     print()
@@ -105,7 +106,7 @@ if len(arguments) <= 2:
         if status == 302:
             print("HTTP/1.1 302 Found")
         if status > 302:
-            print("HTTP/1.1 " + string(status))
+            print("HTTP/1.1 " + str(status))
 
         print("Date: " + builtRequest.headers['date'])
         try:
