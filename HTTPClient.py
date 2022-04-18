@@ -117,3 +117,8 @@ def access_code(s):
 
 x = requests.get("https://"+host_name+path_name, params={'Host': host_name, 'Time': str(datetime.datetime.now()), 'Class-name': 'VCU-CMSC440-2022', 'User-name': 'Masrik Dahir'})
 print(x.headers)
+
+
+
+
+

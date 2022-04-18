@@ -217,7 +217,7 @@ elif arguments[1].upper() == 'PUT':
     s.connect((remote_ip, int(port)))
     print('# Sending data to server')
 
-    request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
+    request = "PUT %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
               % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
 
     print(request)
@@ -238,4 +238,3 @@ elif arguments[1].upper() == 'PUT':
 
 else:
     sys.exit("Invalid Args")
-
