@@ -1,5 +1,5 @@
 import socket
-from datetime import datetime
+import datetime
 import sys
 import os
 import re
@@ -45,7 +45,7 @@ if len(arguments) <= 2:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((hostname, int(port)))
 
-    builtRequest = requests.get(url, headers = {"Host": hostname, "Time": datetime.now().strftime("%a, %d %b %Y %H:%M:%S"), "Class-name": "VCU-CMSC440-2022", "User-name": "Masrik Dahir"})
+    builtRequest = requests.get(url, headers = {"Host": hostname, "Time": datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S"), "Class-name": "VCU-CMSC440-2022", "User-name": "Masrik Dahir"})
     status = builtRequest.status_code
 
     print(builtRequest.request.method + " " + builtRequest.request.url)
@@ -168,12 +168,41 @@ elif arguments[1].upper() == 'PUT':
         path = "/"
     print(path)
 
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((hostname, int(port)))
-    response = requests.put(url,
-                            headers = {"Host": hostname, "Time": datetime.now().strftime("%a, %d %b %Y %H:%M:%S"), "Class-name": "VCU-CMSC440-2022", "User-name": "Masrik Dahir"},
-                            data=arguments[3])
-    print(response.headers)
+
+    print('# Creating socket')
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    except socket.error:
+        print('Failed to create socket')
+        sys.exit()
+
+
+    print('# Getting remote IP address')
+    try:
+        remote_ip = socket.gethostbyname(hostname)
+    except socket.gaierror:
+        print('Hostname could not be resolved. Exiting')
+        sys.exit()
+    print('# Connecting to server, ' + hostname + ' (' + remote_ip + ')')
+    s.connect((remote_ip, int(port)))
+    print('# Sending data to server')
+
+    request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
+              % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
+
+    print(request)
+
+    try:
+        s.sendall(request.encode())
+        # print(request.status_code)
+    except socket.error:
+        print('Send failed')
+        sys.exit()
+
+    print('# Receive data from server')
+    reply = str(s.recv(4096), 'utf-8')
+
+    print(reply)
 
 
 
