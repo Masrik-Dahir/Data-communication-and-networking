@@ -1,8 +1,3 @@
-# Shafi Hassan
-# CMSC 440
-# April 14, 2022
-# Project 1
-
 import socket
 from datetime import datetime
 import sys
@@ -24,11 +19,11 @@ if len(arguments) <= 2:
         url.split(":")[2]
         hostname = url.split(":")[1]
         hostname = hostname[2:len(hostname)]
-        print(hostname)
+        # print(hostname)
     except:
         hostname = url.split("/")[2]
         portCheck = False
-        print(hostname)
+        # print(hostname)
     if portCheck:
         try:
             url.split("/")[3]
@@ -38,7 +33,7 @@ if len(arguments) <= 2:
             port = url.split("/")[2].split(":")[1]
     else:
         port = '80'
-    print(port)
+    # print(port)
     if pathCheck:
         try:
             path = url.split("/")[3]
@@ -46,17 +41,13 @@ if len(arguments) <= 2:
             path = "/"
     else:
         path = "/"
-    print(path)
-    #create a socket object
+    # print(path)
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((hostname, int(port)))
 
-    #build the request with the hostname, time, classname, and username
-    builtRequest = requests.get(url, headers = {"Host": hostname, "Time": datetime.now().strftime("%a, %d %b %Y %H:%M:%S"), "Class-name": "VCU-CMSC440-2022", "User-name": "Shafi Hassan"})
-    #get the status code of the request
+    builtRequest = requests.get(url, headers = {"Host": hostname, "Time": datetime.now().strftime("%a, %d %b %Y %H:%M:%S"), "Class-name": "VCU-CMSC440-2022", "User-name": "Masrik Dahir"})
     status = builtRequest.status_code
 
-    #print the request
     print(builtRequest.request.method + " " + builtRequest.request.url)
     print("Host: " + builtRequest.request.headers['host'])
     print("Time: " + builtRequest.request.headers['time'])
@@ -64,10 +55,7 @@ if len(arguments) <= 2:
     print("Class-name: " + builtRequest.request.headers['class-name'])
     print("User-name: " + builtRequest.request.headers['user-name'])
     print()
-    #print(builtRequest.request.headers)
 
-    #check the status code and do the correspoding actions
-    # 200, lastModified date, number of bytes, and store the file
     if status == 200:
         print("HTTP/1.1 200 OK")
         print("Date: " + builtRequest.headers['date'])
@@ -141,18 +129,17 @@ if len(arguments) <= 2:
             print("Content-Type: " + builtRequest.headers['content-type'])
         except:
             print("Content-Type: Not Found")
-    #print(status)
-    #print(builtRequest.headers)
+
     cwd = os.getcwd()
     open(format(cwd) + "/" + path, "wb").write(builtRequest.content)
-    #webbrowser.open_new_tab(path.split("/")[1])
 
-elif arguments[1] == 'PUT' or arguments[1] == 'put':
+elif arguments[1].upper() == 'PUT':
     url = arguments[2]
+    pathCheck = True
     portCheck = True
     if url[0:7] != 'http://':
-        sys.exit("ERR -arg 2")
-    # parse the url into hostname, port, and path
+        sys.exit("ERR -arg 1")
+    #parse the url into hostname, port, and path
     try:
         url.split(":")[2]
         hostname = url.split(":")[1]
@@ -167,10 +154,27 @@ elif arguments[1] == 'PUT' or arguments[1] == 'put':
             url.split("/")[3]
             port = url.split("/")[2].split(":")[1]
         except:
+            pathCheck = False
             port = url.split("/")[2].split(":")[1]
     else:
         port = '80'
-        print(port)
+    print(port)
+    if pathCheck:
+        try:
+            path = url.split("/")[3]
+        except:
+            path = "/"
+    else:
+        path = "/"
+    print(path)
+
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((hostname, int(port)))
+    response = requests.put(url,
+                            headers = {"Host": hostname, "Time": datetime.now().strftime("%a, %d %b %Y %H:%M:%S"), "Class-name": "VCU-CMSC440-2022", "User-name": "Masrik Dahir"},
+                            data=arguments[3])
+    print(response.headers)
+
 
 
 else:
