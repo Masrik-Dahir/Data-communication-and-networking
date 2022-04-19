@@ -63,11 +63,8 @@ if len(arguments) <= 2:
     s.connect((remote_ip, int(port)))
     print('# Sending data to server')
 
-    fileName = "index.html"
-    openBin = {'file': (fileName, open(fileName, 'rb').read())}
-
-    request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\nfiles: %s\r\n" \
-              % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir", openBin)
+    request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
+              % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
 
     print(request)
 
@@ -223,8 +220,11 @@ elif arguments[1].upper() == 'PUT':
     s.connect((remote_ip, int(port)))
     print('# Sending data to server')
 
-    request = "PUT %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
-              % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
+    fileName = "index.html"
+    openBin = {'file': (fileName, open(fileName, 'rb').read())}
+
+    request = "PUT %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\nfiles: %s\r\n" \
+              % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir", openBin)
 
     print(request)
 
