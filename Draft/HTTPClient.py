@@ -5,6 +5,9 @@ import os
 import re
 
 arguments = sys.argv
+# arguments = ['.\\HTTPClient.py', 'http://egr.vcu.edu']
+# arguments = ['.\\HTTPClient.py', 'PUT', 'http://httpbin.org:80', "index.html"]
+
 
 if len(arguments) <= 2:
     portCheck = True
@@ -60,8 +63,11 @@ if len(arguments) <= 2:
     s.connect((remote_ip, int(port)))
     print('# Sending data to server')
 
-    request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
-              % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
+    fileName = "index.html"
+    openBin = {'file': (fileName, open(fileName, 'rb').read())}
+
+    request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\nfiles: %s\r\n" \
+              % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir", openBin)
 
     print(request)
 
