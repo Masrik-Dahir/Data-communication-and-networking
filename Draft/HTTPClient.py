@@ -20,11 +20,11 @@ if len(arguments) <= 2:
         url.split(":")[2]
         hostname = url.split(":")[1]
         hostname = hostname[2:len(hostname)]
-        # print(hostname)
+
     except:
         hostname = url.split("/")[2]
         portCheck = False
-        # print(hostname)
+
     if portCheck:
         try:
             url.split("/")[3]
@@ -42,7 +42,7 @@ if len(arguments) <= 2:
             path = "/"
     else:
         path = "/"
-    # print(path)
+
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((hostname, int(port)))
 
@@ -62,6 +62,10 @@ if len(arguments) <= 2:
     print('# Connecting to server, ' + hostname + ' (' + remote_ip + ')')
     s.connect((remote_ip, int(port)))
     print('# Sending data to server')
+
+    print(hostname)
+    print(port)
+    print(path)
 
     request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
               % ("/", hostname, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")

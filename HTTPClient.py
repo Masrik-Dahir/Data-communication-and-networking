@@ -1,33 +1,93 @@
 # Author: Masrik Dahir
 # Date: 2021-05-04
 import datetime
+import os
 import socket
-import requests
 import sys
 import re
 
 
-input = str(sys.argv[1])
-addSlash = False
-p = '(?:http.*://)?(?P<host>[^:/ ]+).?(?P<port>[0-9]*)(?P<path>[^\s]*)'
-link = re.search(p,input)
+def regex(s, tag):
+    text = re.findall("<" + tag + ">(.*?)</" + tag + ">", s, re.DOTALL)
+    text = str(text).replace("[", "")
+    text = str(text).replace("]", "")
+    text = str(text).replace("'", "")
+    text = str(text).split(" ")
+    for i in text:
+        if i == "":
+            text.remove(i)
+    return text
 
-host_name = link.group('host')
 
-port_name = link.group('port')
-if port_name == "":
-    port_name = "80"
-    addSlash = True
+def link(s):
+    text = re.findall("<a href=(.*?)>.*?</a>", s, re.DOTALL)
+    text = str(text).replace("[", "")
+    text = str(text).replace("]", "")
+    text = str(text).replace("'", "")
+    text = str(text).replace("\"", "")
+    text = str(text).split(" ")
+    for i in text:
+        if i == "":
+            text.remove(i)
+    return text
 
-path_name = link.group('path')
-if addSlash:
-    path_name = "/"+path_name
-if path_name == "":
-    path_name = "/"
 
-print("Host:\t"+host_name)
-print("Port:\t"+port_name)
-print("Path:\t"+path_name)
+def string(s, diff=" "):
+    text = ""
+    for i in s:
+        text += diff + str(i)
+    return text
+
+
+def access_code(s):
+    access_code = ""
+    for i in regex(s, "title"):
+        if str(i).isdigit():
+            access_code = str(i)
+    return access_code
+
+
+def tag(st: str, start, end, included=True):
+    new = st.split(start)[1:]
+    new = string(new)
+    new_2 = new.split(end)[0]
+    return str(start) + str(new_2) + str(end)
+
+
+input = ""
+for i in sys.argv:
+    if "http" in str(i):
+        input = i
+
+host_name = ""
+port_name = ""
+path_name = ""
+file_name = ""
+
+if input[0:7] != 'http://':
+    sys.exit("ERR -arg 1")
+# parse the url into hostname, port, and path
+else:
+    host_name = input.split("/")[2]
+    host_name = re.sub(":\w*", "", host_name)
+    host_name = re.sub("\\\\\w*", "", host_name)
+
+    if len(input.split(":")) == 3:
+        # print(str(input))
+        port_name = input.split("/")[2].split(":")[1]
+
+    if len(input.split("/")) >= 4:
+        path_name = string(input.split("/")[3:], "/")
+
+    if port_name == "":
+        port_name = "80"
+
+    if path_name == "":
+        path_name = "/"
+
+print("Host:\t" + host_name)
+print("Port:\t" + port_name)
+print("Path:\t" + str(path_name))
 # ______________________________________________________________________________________________
 # host_name = 'httpbin.org'
 # port_name = '80'
@@ -42,83 +102,65 @@ except socket.error:
 
 print('# Getting remote IP address')
 try:
-    remote_ip = socket.gethostbyname( host_name )
+    remote_ip = socket.gethostbyname(host_name)
 except socket.gaierror:
     print('Hostname could not be resolved. Exiting')
     sys.exit()
 print('# Connecting to server, ' + host_name + ' (' + remote_ip + ')')
-s.connect((remote_ip , int(port_name)))
-print('# Sending data to server')
+s.connect((remote_ip, int(port_name)))
+print()
 
-request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
-          %("/", host_name, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
+def send():
+    if len(sys.argv) == 2:
+        print('# Sending data to server')
+        request = "GET %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\n\r\n" \
+                  % (path_name, host_name, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir")
 
-print(request)
+        print(request)
+
+        try:
+            s.sendall(request.encode())
+            # print(request.status_code)
+        except socket.error:
+            print('Send failed')
+            sys.exit()
+
+        print('# Receive data from server')
+        reply = str(s.recv(4096), 'utf-8')
+
+        print(reply)
+
+        # download files
+        if path_name == '/':
+            file_name = "\index.html"
+        else:
+            file_name = path_name
+        cwd = os.getcwd()
+        print(cwd + file_name)
+        open(format(cwd) + file_name, "wb").write(bytes(tag(str(reply), "<html>", "</html>"), "utf-8"))
+
+    if len(sys.argv) == 4:
+        file_name = sys.argv[3]
+        print("File:\t" + file_name)
+        print('# Sending data to server')
+        request = "PUT %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\nfiles:%s\r\n\r\n" \
+                  % (file_name, host_name, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir", file_name)
+
+        print(request)
+
+        try:
+            s.sendall(request.encode())
+            # print(request.status_code)
+        except socket.error:
+            print('Send failed')
+            sys.exit()
+
+        print('# Receive data from server')
+        reply = str(s.recv(4096), 'utf-8')
+
+        print(reply)
 
 try:
-    s.sendall(request.encode())
-    # print(request.status_code)
-except socket.error:
-    print('Send failed')
-    sys.exit()
-
-print('# Receive data from server')
-reply = str(s.recv(4096), 'utf-8')
-
-print(reply)
-
-# data = b''
-# while True:
-#     buf = s.recv(1024)
-#     if not buf:
-#         break
-#     data += buf
-# print(data)
-
-def regex(s, tag):
-    text = re.findall("<" +tag+ ">(.*?)</" +tag+ ">", s, re.DOTALL)
-    text = str(text).replace("[", "")
-    text = str(text).replace("]", "")
-    text = str(text).replace("'", "")
-    text = str(text).split(" ")
-    for i in text:
-        if i == "":
-            text.remove(i)
-    return text
-
-def link(s):
-    text = re.findall("<a href=(.*?)>.*?</a>", s, re.DOTALL)
-    text = str(text).replace("[", "")
-    text = str(text).replace("]", "")
-    text = str(text).replace("'", "")
-    text = str(text).replace("\"", "")
-    text = str(text).split(" ")
-    for i in text:
-        if i == "":
-            text.remove(i)
-    return text
-
-def string(s):
-    text = ""
-    for i in s:
-        text += str(i) + " "
-    return text
-
-def access_code(s):
-    access_code = ""
-    for i in regex(s, "title"):
-        if str(i).isdigit():
-            access_code = str(i)
-    return access_code
-
-# if int(access_code(reply)) > 299 and int(access_code(reply)) < 400:
-#     print("The response code: " + access_code(reply))
-#     print("The URL where the file is located: " + string(link(reply)))
-
-x = requests.get("https://"+host_name+path_name, params={'Host': host_name, 'Time': str(datetime.datetime.now()), 'Class-name': 'VCU-CMSC440-2022', 'User-name': 'Masrik Dahir'})
-print(x.headers)
-
-
-
-
-
+    send()
+except KeyboardInterrupt:
+    pass

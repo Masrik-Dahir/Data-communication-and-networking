@@ -1,4 +1,4 @@
-https://httpbin.org:80
-https://egr.vcu.edu/index.html
-
+http://httpbin.org:80
+http://egr.vcu.edu/index.html
+http://httpstat.us/200
 
