@@ -149,16 +149,15 @@ def send():
         print(request)
 
         try:
-            s.sendall(request.encode())
+            s.sendall(request.encode('utf-8'))
             # print(request.status_code)
         except socket.error:
             print('Send failed')
             sys.exit()
 
         print('# Receive data from server')
-        reply = str(s.recv(4096), 'utf-8')
-
-        print(reply)
+        reply = s.recvfrom(2048)
+        print(reply[0].decode())
 
 try:
     send()

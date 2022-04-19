@@ -34,5 +34,5 @@ while 1:
     connectionSocket.send(serverSentence)
     print('TO CLIENT', serverSentence)
     
-    # Close the connection socket
-    connectionSocket.close()
+# Close the connection socket
+connectionSocket.close()
