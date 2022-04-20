@@ -135,8 +135,8 @@ def send():
         else:
             file_name = path_name
         cwd = os.getcwd()
-        print(cwd + file_name)
-        open(format(cwd) + file_name, "wb").write(bytes(tag(str(reply), "<html>", "</html>"), "utf-8"))
+        # print(cwd + file_name)
+        open(format(cwd) + file_name, "wb").write(bytes(html(str(reply)), "utf-8"))
 
     if len(sys.argv) == 4:
         file_name = sys.argv[3]

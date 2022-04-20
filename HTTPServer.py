@@ -94,7 +94,7 @@ def main():
                 response = 'HTTP/1.0 200 OK\r\n%s' %(lines)
 
             except FileNotFoundError:
-                response = 'HTTP/1.0 606 File NOT Created'
+                response = 'HTTP/1.0 404 Not Found'
 
 
             modifiedSentence = 'Message Received!'
