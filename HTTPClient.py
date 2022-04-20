@@ -6,6 +6,10 @@ import socket
 import sys
 import re
 
+def html(st:str):
+    arg = st.split('<!DOCTYPE')[1]
+    arg = '<!DOCTYPE' + arg
+    return arg
 
 def regex(s, tag):
     text = re.findall("<" + tag + ">(.*?)</" + tag + ">", s, re.DOTALL)
