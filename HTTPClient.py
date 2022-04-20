@@ -105,9 +105,12 @@ try:
 except socket.gaierror:
     print('Hostname could not be resolved. Exiting')
     sys.exit()
-print('# Connecting to server, ' + host_name + ' (' + remote_ip + ')')
-s.connect((remote_ip, int(port_name)))
-print()
+try:
+    print('# Connecting to server, ' + host_name + ' (' + remote_ip + ')')
+    s.connect((remote_ip, int(port_name)))
+    print()
+except:
+    sys.exit("The host name or the port number is incorrect.\n")
 
 def send():
     if len(sys.argv) == 2:
@@ -118,25 +121,29 @@ def send():
         print(request)
 
         try:
-            s.sendall(request.encode())
+            s.sendall(request.encode('utf-8'))
             # print(request.status_code)
         except socket.error:
-            print('Send failed')
-            sys.exit()
+            sys.exit('Send failed')
 
         print('# Receive data from server')
-        reply = str(s.recv(4096), 'utf-8')
+        reply = s.recvfrom(2048)
+        print(reply[0].decode('utf-8'))
+        # status_code = int(str(reply).split("\n")[0].split(' ')[1])
+        #
+        # if status_code >= 200 and status_code < 300:
+        #
+        #     print("Response code: %s" %(status_code))
+        #
+        #     if path_name == '/':
+        #         file_name = "index.html"
+        #     else:
+        #         file_name = path_name.split('/')[-1]
+        #     cwd = os.getcwd()
+        #     print(cwd)
+        #     open(format(cwd) + "/" + file_name, "w").write(html(reply[0].decode('utf-8')))
 
-        print(reply)
 
-        # download files
-        if path_name == '/':
-            file_name = "\index.html"
-        else:
-            file_name = path_name
-        cwd = os.getcwd()
-        # print(cwd + file_name)
-        open(format(cwd) + file_name, "wb").write(bytes(html(str(reply)), "utf-8"))
 
     if len(sys.argv) == 4:
         file_name = sys.argv[3]

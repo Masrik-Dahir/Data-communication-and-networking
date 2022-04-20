@@ -1,7 +1,9 @@
+from datetime import datetime
 import os
 import sys
 import re
 import socket
+from os.path import exists
 
 def string(s, diff=" "):
     text = ""
@@ -67,10 +69,10 @@ def main():
                 file.close()
 
                 # Printing valid HTTP response
-                response = 'HTTP/1.0 200 OK File Created'
+                response = 'HTTP/1.0 200 OK File Created\r\n'
 
             except FileNotFoundError:
-                response = 'HTTP/1.0 606 File NOT Created'
+                response = 'HTTP/1.0 606 File NOT Created\r\n'
 
 
             modifiedSentence = 'Message Received!'
@@ -78,27 +80,25 @@ def main():
             connection_socket.close()
 
         if request_type.upper() == "GET":
-            try:
-                filename = "." + sentence.split()[1]
 
-                if filename == './':
-                    filename = './index.html'
+            filename = "." + sentence.split()[1]
 
-                print(filename)
+            if filename == './':
+                filename = './index.html'
 
-                with open(filename) as file:
+            # print(filename)
+            if exists(filename):
+                with open(filename, 'rb') as file:
                     lines = file.read()
-                print(lines)
+                # print(lines.decode('utf-8'))
 
                 # Printing valid HTTP response
-                response = 'HTTP/1.0 200 OK\r\n%s' %(lines)
+                response = 'HTTP/1.0 200 OK\nServer: %s\nLast-Modified: %s\nContent-Length: %s\n\n%s\n'.encode('utf-8') %('Apache-Coyote'.encode('utf-8'), datetime.now().strftime("%a, %d %b %Y %H:%M:%S").encode('utf-8'), '300'.encode('utf-8'), lines)
 
-            except FileNotFoundError:
-                response = 'HTTP/1.0 404 Not Found'
+            else:
+                response = 'HTTP/1.0 404 Not Found\n'.encode('utf-8')
 
-
-            modifiedSentence = 'Message Received!'
-            connection_socket.send(response.encode('utf-8'))
+            connection_socket.send(response)
             connection_socket.close()
 
 

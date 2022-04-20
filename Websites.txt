@@ -2,3 +2,5 @@ http://httpbin.org:80
 http://egr.vcu.edu/index.html
 http://httpstat.us/200
 
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"><html>Hello World<p>Noting</p></html>
+
