@@ -79,15 +79,19 @@ def main():
 
         if request_type.upper() == "GET":
             try:
-                filename = sentence.split()[1]
+                filename = "." + sentence.split()[1]
 
-                if filename == '/':
-                    filename = '/index.html'
+                if filename == './':
+                    filename = './index.html'
 
                 print(filename)
 
+                with open(filename) as file:
+                    lines = file.read()
+                print(lines)
+
                 # Printing valid HTTP response
-                response = 'HTTP/1.0 200 OK File Created'
+                response = 'HTTP/1.0 200 OK\r\n%s' %(lines)
 
             except FileNotFoundError:
                 response = 'HTTP/1.0 606 File NOT Created'
