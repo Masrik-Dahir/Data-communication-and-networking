@@ -50,36 +50,62 @@ def main():
 
 
         # Get the content of htdocs/index.html
-        try:
-            filename = sentence.split()[1]
-            lines = ""
-            with open(filename) as f:
-                lines = f.read()
-            print(lines)
-            directory = './'
-            file_path = os.path.join(directory, filename.split("/")[-1])
-            if not os.path.isdir(directory):
-                os.mkdir(directory)
-            file = open(file_path, "w")
-            file.write(lines)
-            file.close()
 
-            # Printing valid HTTP response
-            response = 'HTTP/1.0 200 OK File Created'
+        if request_type.upper() == "PUT":
+            try:
+                filename = sentence.split()[1]
+                lines = ""
+                with open(filename) as f:
+                    lines = f.read()
+                print(lines)
+                directory = './'
+                file_path = os.path.join(directory, filename.split("/")[-1])
+                if not os.path.isdir(directory):
+                    os.mkdir(directory)
+                file = open(file_path, "w")
+                file.write(lines)
+                file.close()
 
-        except FileNotFoundError:
-            response = 'HTTP/1.0 606 File NOT Created'
+                # Printing valid HTTP response
+                response = 'HTTP/1.0 200 OK File Created'
+
+            except FileNotFoundError:
+                response = 'HTTP/1.0 606 File NOT Created'
 
 
-        modifiedSentence = 'Message Received!'
-        connection_socket.send(response.encode('utf-8'))
-        connection_socket.close()
+            modifiedSentence = 'Message Received!'
+            connection_socket.send(response.encode('utf-8'))
+            connection_socket.close()
+
+        if request_type.upper() == "GET":
+            try:
+                filename = sentence.split()[1]
+
+                if filename == '/':
+                    filename = '/index.html'
+
+                print(filename)
+
+                # Printing valid HTTP response
+                response = 'HTTP/1.0 200 OK File Created'
+
+            except FileNotFoundError:
+                response = 'HTTP/1.0 606 File NOT Created'
+
+
+            modifiedSentence = 'Message Received!'
+            connection_socket.send(response.encode('utf-8'))
+            connection_socket.close()
+
+
+
+
 
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        print('Interrupted')
+        print('\nKeyboard Interruption (Ctrl-C)')
         try:
             sys.exit(0)
         except SystemExit:
