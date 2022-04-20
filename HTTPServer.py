@@ -54,13 +54,15 @@ while 1:
         with open(filename) as f:
             lines = f.read()
         print(lines)
-        directory = './HTTPServer_html/'
-        file_path = os.path.join(directory, filename)
+        directory = './'
+        file_path = os.path.join(directory, filename.split("/")[-1])
         if not os.path.isdir(directory):
             os.mkdir(directory)
         file = open(file_path, "w")
         file.write(lines)
         file.close()
+
+        # Printing valid HTTP response
         response = 'HTTP/1.0 200 OK\r\nFile: %s\r\n\r\n' % (filename)
 
     except FileNotFoundError:
