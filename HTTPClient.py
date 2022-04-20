@@ -138,7 +138,7 @@ def send():
         file_name = sys.argv[3]
         print("File:\t" + file_name)
         print('# Sending data to server')
-        request = "PUT %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\nfiles:%s\r\n\r\n" \
+        request = "PUT %s HTTP/1.0\r\nHost: %s\r\nTime: %s\r\nClass-name: %s\r\nUser-name: %s\r\nAccept: text/html\r\nfiles: %s\r\n\r\n" \
                   % (file_name, host_name, datetime.datetime.now(), "VCU-CMSC440-2022", "Masrik Dahir", file_name)
 
         print(request)

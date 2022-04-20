@@ -1,61 +1,3 @@
-# """
-#  Implements a simple HTTP/1.0 Server
-#
-# """
-#
-# import socket as http_server_socket
-#
-#
-# # Define socket host and port
-# server_ip = '127.0.0.1'
-# server_port = 8000
-#
-# # Create socket
-# socket_1 = http_server_socket.socket(http_server_socket.AF_INET, http_server_socket.SOCK_STREAM)
-# socket_1.setsockopt(http_server_socket.SOL_SOCKET, http_server_socket.SO_REUSEADDR, 1)
-# socket_1.bind((server_ip, server_port))
-# socket_1.listen(1)
-# print('Listening on port %s ...' % server_port)
-#
-# while True:
-#     # Wait for client connections
-#     client_connection, client_address = socket_1.accept()
-#
-#     # Get the client request
-#     request = client_connection.recv(1024).decode()
-#     print(request)
-#
-#     # Parse HTTP headers
-#     headers = request.split('\n')
-#     filename = str(headers[0].split()[1]).replace('/','')
-#     if filename == "":
-#         filename = "index.html"
-#
-#     # Get the content of htdocs/index.html
-#     try:
-#         fin = open(str(filename))
-#         content = fin.read()
-#         fin.close()
-#         response = 'HTTP/1.0 200 OK\n\n' + content
-#
-#     except FileNotFoundError:
-#         response = 'HTTP/1.0 404 NOT FOUND\n\nFile Not Found'
-#
-#     # Send HTTP response
-#     client_connection.sendall(response.encode())
-#     client_connection.close()
-#
-# #
-#
-# # Close socket
-# socket_1.close()
-
-
-
-
-
-
-
 import os
 import sys
 import re
@@ -94,9 +36,16 @@ print ("The server is ready to receive at port: %s" %(server_port))
 while 1:
     print ("Waiting ...")
     connection_socket, addr = server.accept()
-    print ("accept")
+    print ("accept\n")
     sentence = connection_socket.recv(2048).decode()
-    print (sentence)
+    request_type = str(sentence.split("\n\r")[0].split(" ")[0])
+
+    # Printing client's ip + port + request type
+    print(str(addr[0]) + ":" + str(addr[1]) + ":" + request_type)
+
+    # Printing ech line in HTTP body
+    print(sentence)
+
 
     # Get the content of htdocs/index.html
     try:
@@ -118,10 +67,6 @@ while 1:
         response = 'HTTP/1.0 404 NOT FOUND\n\nFile Not Found'
 
 
-
-
-
     modifiedSentence = 'Message Received!'
-
     connection_socket.send(response.encode('utf-8'))
     connection_socket.close()
