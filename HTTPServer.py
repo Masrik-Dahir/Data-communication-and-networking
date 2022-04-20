@@ -75,5 +75,12 @@ def main():
         connection_socket.send(response.encode('utf-8'))
         connection_socket.close()
 
-
-
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
