@@ -57,23 +57,36 @@
 
 
 import os
+import sys
 import socket
-server_port = 12000
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(('', server_port))
-server.listen(1)
 
-print ("The server is ready to receive")
+
+
+try:
+    if len(sys.argv) == 2 and int(sys.argv[1])>0 and int(sys.argv[1]) < 65536:
+            server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_port = int(sys.argv[1])
+            server.bind(('', server_port))
+            server.listen(1)
+    else:
+        ag = ""
+        for i in range(1,len(sys.argv)):
+            ag += str(i) + " "
+        sys.exit("ERR -arg %s" %(ag))
+except:
+        ag = ""
+        for i in range(1, len(sys.argv)):
+            ag += str(i) + " "
+        sys.exit("ERR -arg %s" % (ag))
+
+
+print ("The server is ready to receive at port: %s" %(server_port))
 while 1:
     print ("Waiting ...")
     connection_socket, addr = server.accept()
     print ("accept")
     sentence = connection_socket.recv(2048).decode()
-    print ("Message Received: \n" + sentence)
-
-
-
-
+    print (sentence)
 
     # Get the content of htdocs/index.html
     try:

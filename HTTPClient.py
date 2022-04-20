@@ -18,7 +18,6 @@ def regex(s, tag):
             text.remove(i)
     return text
 
-
 def link(s):
     text = re.findall("<a href=(.*?)>.*?</a>", s, re.DOTALL)
     text = str(text).replace("[", "")
@@ -31,13 +30,11 @@ def link(s):
             text.remove(i)
     return text
 
-
 def string(s, diff=" "):
     text = ""
     for i in s:
         text += diff + str(i)
     return text
-
 
 def access_code(s):
     access_code = ""
@@ -46,13 +43,11 @@ def access_code(s):
             access_code = str(i)
     return access_code
 
-
 def tag(st: str, start, end, included=True):
     new = st.split(start)[1:]
     new = string(new)
     new_2 = new.split(end)[0]
     return str(start) + str(new_2) + str(end)
-
 
 input = ""
 for i in sys.argv:
