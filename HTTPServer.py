@@ -58,9 +58,19 @@
 
 import os
 import sys
+import re
 import socket
 
+def string(s, diff=" "):
+    text = ""
+    for i in s:
+        text += diff + str(i)
+    return text
 
+def semicolon(st:str, var: str):
+    arg = string(re.findall("(?<=%s:).*" %(var), st))
+    arg = re.sub("^\s+","", arg)
+    return arg
 
 try:
     if len(sys.argv) == 2 and int(sys.argv[1])>0 and int(sys.argv[1]) < 65536:
