@@ -6,7 +6,7 @@ import socket
 import sys
 import re
 
-def html(st:str):
+def html(st):
     arg = st.split('<!DOCTYPE')[1]
     arg = '<!DOCTYPE' + arg
     return arg
@@ -47,7 +47,7 @@ def access_code(s):
             access_code = str(i)
     return access_code
 
-def tag(st: str, start, end, included=True):
+def tag(st, start, end, included=True):
     new = st.split(start)[1:]
     new = string(new)
     new_2 = new.split(end)[0]
@@ -158,7 +158,7 @@ def send():
             s.sendall(request.encode('utf-8'))
             # print(request.status_code)
         except socket.error:
-            print('Send failed')
+            print('Send failed\nThe host doesn\'t exist or the port given is not open')
             sys.exit()
 
         print('# Receive data from server')

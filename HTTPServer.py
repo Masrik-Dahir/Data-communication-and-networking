@@ -11,7 +11,7 @@ def string(s, diff=" "):
         text += diff + str(i)
     return text
 
-def semicolon(st:str, var: str):
+def semicolon(st, var):
     arg = string(re.findall("(?<=%s:).*" %(var), st))
     arg = re.sub("^\s+","", arg)
     return arg
@@ -93,7 +93,7 @@ def main():
                 # print(lines.decode('utf-8'))
 
                 # Printing valid HTTP response
-                response = 'HTTP/1.0 200 OK\nServer: %s\nLast-Modified: %s\nContent-Length: %s\n\n%s\n'.encode('utf-8') %('Apache-Coyote'.encode('utf-8'), datetime.now().strftime("%a, %d %b %Y %H:%M:%S").encode('utf-8'), '300'.encode('utf-8'), lines)
+                response = 'HTTP/1.0 200 OK\nServer: %s\nLast-Modified: %s\nContent-Length: %s\n\n%s\n'.encode('utf-8') %(str(os.getenv('HOSTNAME')).encode('utf-8'), datetime.now().strftime("%a, %d %b %Y %H:%M:%S").encode('utf-8'), str(len(lines)).encode('utf-8'), lines)
 
             else:
                 response = 'HTTP/1.0 404 Not Found\n'.encode('utf-8')
