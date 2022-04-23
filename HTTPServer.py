@@ -61,9 +61,13 @@ def main():
                     lines = f.read()
                 print(lines)
                 directory = './'
-                file_path = os.path.join(directory, filename.split("/")[-1])
+                first = filename.split("/")[-1]
+                second = first.split("\\")[-1]
+                file_path = os.path.join(directory, second)
+
                 if not os.path.isdir(directory):
                     os.mkdir(directory)
+                print(file_path)
                 file = open(file_path, "w")
                 file.write(lines)
                 file.close()

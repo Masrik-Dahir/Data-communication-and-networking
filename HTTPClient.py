@@ -165,6 +165,10 @@ def send():
         reply = s.recvfrom(2048)
         print(reply[0].decode())
 
+    if len(sys.argv) == 3 and sys.argv[1].upper() == 'PUT':
+        print("No File is included in the PUT request.")
+
+
 try:
     send()
 except KeyboardInterrupt:
