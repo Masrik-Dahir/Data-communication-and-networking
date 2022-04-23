@@ -129,19 +129,19 @@ def send():
         print('# Receive data from server')
         reply = s.recvfrom(2048)
         print(reply[0].decode('utf-8'))
-        # status_code = int(str(reply).split("\n")[0].split(' ')[1])
-        #
-        # if status_code >= 200 and status_code < 300:
-        #
-        #     print("Response code: %s" %(status_code))
-        #
-        #     if path_name == '/':
-        #         file_name = "index.html"
-        #     else:
-        #         file_name = path_name.split('/')[-1]
-        #     cwd = os.getcwd()
-        #     print(cwd)
-        #     open(format(cwd) + "/" + file_name, "w").write(html(reply[0].decode('utf-8')))
+        status_code = int(str(reply).split("\n")[0].split(' ')[1])
+
+        if status_code >= 200 and status_code < 300:
+
+            print("Response code: %s" %(status_code))
+
+            if path_name == '/':
+                file_name = "index.html"
+            else:
+                file_name = path_name.split('/')[-1]
+            cwd = os.getcwd()
+            print(cwd)
+            open(format(cwd) + "/" + file_name, "w").write(html(reply[0].decode('utf-8')))
 
 
 
