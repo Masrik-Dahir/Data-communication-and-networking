@@ -1,3 +1,13 @@
+# ----------------------------------------------------
+#  Masrik Dahir
+#  Date: 04/24/2022
+#
+#  ---------------------------------------------------
+#  Usage Guide
+#  (1) python HTTPServer.py 10004
+#
+# ----------------------------------------------------
+
 from datetime import datetime
 import os
 import sys
@@ -5,12 +15,15 @@ import re
 import socket
 from os.path import exists
 
+# string converts a list to string with a preffered seperator
+# string(["a", "b", "c"], " ") --> "a b c"
 def string(s, diff=" "):
     text = ""
     for i in s:
         text += diff + str(i)
     return text
 
+# semicolon function finds the phrases after semicolon of a an attribute i.e. "Host: egr.vcu.edu" --> "egr.vcu.edu"
 def semicolon(st, var):
     arg = string(re.findall("(?<=%s:).*" %(var), st))
     arg = re.sub("^\s+","", arg)
@@ -35,31 +48,34 @@ def main():
             sys.exit("ERR -arg %s" % (ag))
 
 
-    print ("The server is ready to receive at port: %s" %(server_port))
+    print ("The server is ready to receive at PORT: %s" %(server_port))
 
     while 1:
-        print ("Waiting ...")
         connection_socket, addr = server.accept()
-        print ("accept\n")
-        sentence = connection_socket.recv(2048).decode()
+        sentence = connection_socket.recv(1024).decode()
         request_type = str(sentence.split("\n\r")[0].split(" ")[0])
 
-        # Printing client's ip + port + request type
+        print("\n# Client IP address, port, and request")
         print(str(addr[0]) + ":" + str(addr[1]) + ":" + request_type)
 
-        # Printing ech line in HTTP body
+        print("\n# Client HTTP request")
         print(sentence)
 
 
-        # Get the content of htdocs/index.html
-
         if request_type.upper() == "PUT":
             try:
-                filename = sentence.split()[1]
+                filename = str(sentence.split()[1])
                 lines = ""
+                if filename.startswith("/"):
+                    filename = str(filename)[1:]
+                elif filename.startswith("./"):
+                    filename = str(filename)[2:]
+                elif filename.startswith("\\"):
+                    filename = str(filename)[1:]
+
+
                 with open(filename) as f:
                     lines = f.read()
-                print(lines)
                 directory = './'
                 first = filename.split("/")[-1]
                 second = first.split("\\")[-1]
@@ -67,19 +83,16 @@ def main():
 
                 if not os.path.isdir(directory):
                     os.mkdir(directory)
-                print(file_path)
                 file = open(file_path, "w")
                 file.write(lines)
                 file.close()
 
-                # Printing valid HTTP response
-                response = 'HTTP/1.0 200 OK File Created\r\n'
+                response = 'HTTP/1.0 200 OK File Created\r\nServer: %s\r\n\r\n' %(str(os.getenv('HOSTNAME')))
 
-            except FileNotFoundError:
-                response = 'HTTP/1.0 606 File NOT Created\r\n'
+            except:
+                response = 'HTTP/1.0 606 File NOT Created\r\n\r\n'
 
 
-            modifiedSentence = 'Message Received!'
             connection_socket.send(response.encode('utf-8'))
             connection_socket.close()
 
@@ -90,22 +103,21 @@ def main():
             if filename == './':
                 filename = './index.html'
 
-            # print(filename)
             if exists(filename):
                 with open(filename, 'rb') as file:
                     lines = file.read()
-                # print(lines.decode('utf-8'))
 
-                # Printing valid HTTP response
-                response = 'HTTP/1.0 200 OK\nServer: %s\nLast-Modified: %s\nContent-Length: %s\n\n%s\n'.encode('utf-8') %(str(os.getenv('HOSTNAME')).encode('utf-8'), datetime.now().strftime("%a, %d %b %Y %H:%M:%S").encode('utf-8'), str(len(lines)).encode('utf-8'), lines)
+                response = 'HTTP/1.0 200 OK\r\nConnection: close\r\nServer: %s\r\nLast-Modified: %s\r\nContent-Length: %s\r\n\r\n'.encode('utf-8') %(str(os.getenv('HOSTNAME')).encode('utf-8'), datetime.now().strftime("%a, %d %b %Y %H:%M:%S").encode('utf-8'), str(len(lines)).encode('utf-8'))
+                connection_socket.send(response)
+                connection_socket.send(lines)
+                connection_socket.close()
+
+
 
             else:
                 response = 'HTTP/1.0 404 Not Found\n'.encode('utf-8')
-
-            connection_socket.send(response)
-            connection_socket.close()
-
-
+                connection_socket.send(response)
+                connection_socket.close()
 
 
 

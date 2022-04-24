@@ -1,58 +1,30 @@
+#import socket module
+from socket import *
+serverSocket = socket(AF_INET, SOCK_STREAM)
+#Prepare a server socket
+webserver_port_number = 6777
 
-import os
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from sys import argv
+serverSocket.bind(('', webserver_port_number))
+serverSocket.listen(3)
 
-BIND_HOST = 'localhost'
-PORT = 8080
-
-
-class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
-
-    def do_GET(self):
-        self.write_response(b'')
-
-    def do_POST(self):
-        content_length = int(self.headers.get('content-length', 0))
-        body = self.rfile.read(content_length)
-        print(body)
-
-
-    def do_PUT(self):
-        content_length = int(self.headers.get('content-length', 0))
-        body = self.rfile.read(content_length)
-        print(body)
-        self.write_response(body)
-        # print(self.path)
-        lines = ""
-        with open(str(self.path)) as f:
-            lines = f.read()
-        print(lines)
-
-        directory = './HTTPServer_html/'
-        filename = str(self.path)
-        file_path = os.path.join(directory, filename)
-        if not os.path.isdir(directory):
-            os.mkdir(directory)
-        file = open(file_path, "w")
-        file.write(lines)
-        file.close()
-
-    def write_response(self, content):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(content)
-
-        print(self.headers)
-        print(content.decode('utf-8'))
-
-
-if len(argv) > 1:
-    arg = argv[1].split(':')
-    BIND_HOST = arg[0]
-    PORT = int(arg[1])
-
-print(f'Listening on http://{BIND_HOST}:{PORT}\n')
-
-httpd = HTTPServer((BIND_HOST, PORT), SimpleHTTPRequestHandler)
-httpd.serve_forever()
+while True:
+    #Establish the connection
+    print ('Ready to serve....')
+    connectionSocket, addr = serverSocket.accept()
+    try:
+        message = connectionSocket.recv(1024)
+        filename = message.split()[1]
+        f = open(filename[1:])
+        outputdata = f.read()
+        #Send one HTTP header line into socket
+        connectionSocket.send('HTTP/1.1 200 OK \r\n%s\r\n\r\n'.encode('utf-8'))
+        #Send the content of the requested file to the client
+        for i in range(0, len(outputdata)):
+            connectionSocket.send(outputdata[i].encode('utf-8'))
+        connectionSocket.close()
+    except IOError:
+        #Send response message for the file not found
+        connectionSocket.send("HTTP/1.1 200 OK  \r\n\r\n 404 Not Found".encode('utf-8'))
+        #print('404 error: File not found')
+    connectionSocket.close()
+serverSocket.close()
