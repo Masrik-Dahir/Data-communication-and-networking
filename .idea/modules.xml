@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Data_communication_and_networking.iml" filepath="$PROJECT_DIR$/.idea/Data_communication_and_networking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HTTP_JAVA/HTTP_JAVA.iml" filepath="$PROJECT_DIR$/HTTP_JAVA/HTTP_JAVA.iml" />
     </modules>
   </component>
 </project>
